@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>goome ui builder</title>
+<meta name="description" content="Build goome UIs by dragging widgets around, then copy the C, C#, Python, Java, GDScript, Rust, Node, Go, Zig or Lua.">
+<link rel="preload" href="../assets/fonts/fredoka.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="elements.css">
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <a class="btn ghost back" id="backBtn" href="../" aria-label="Back to the site"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Back</span></a>
+    <a class="brand" href="../" aria-label="goome home"><i></i>goome ui <small>builder</small></a>
+    <div class="seg" id="modeSeg"><button data-mode="overlay">Overlay</button><button data-mode="app">App</button></div>
+    <div class="sp"></div>
+    <button class="btn sm ghost" id="undoBtn" title="Undo (ctrl+z)"></button>
+    <button class="btn sm ghost" id="redoBtn" title="Redo (ctrl+y)"></button>
+    <button class="btn sm ghost wide" id="gridBtn" title="Grid snap"></button>
+    <button class="btn sm ghost" id="gearBtn" title="Builder settings"></button>
+    <button class="btn sm" id="fileBtn" title="Project"></button>
+  </header>
+  <div class="main">
+    <aside class="pane pal" id="pal"></aside>
+    <section class="center">
+      <div class="stage-wrap" id="stageWrap"></div>
+      <div class="dock" id="dock"></div>
+    </section>
+    <aside class="pane side" id="side">
+      <div class="tabs" id="sideTabs">
+        <button data-tab="props">Edit</button>
+        <button data-tab="layers">Layers</button>
+        <button data-tab="vars">Vars</button>
+        <button data-tab="theme">Theme</button>
+        <button data-tab="elements">Elements</button>
+      </div>
+      <div class="sheet-head" id="sideHead"><span id="sideTitle">Edit</span><button class="btn sm ghost" data-close="side"></button></div>
+      <div class="side-body" id="sideBody"></div>
+    </aside>
+  </div>
+  <nav class="mnav" id="mnav">
+    <button data-m="pal">Add</button>
+    <button data-m="props">Edit</button>
+    <button data-m="layers">Layers</button>
+    <button data-m="vars">Vars</button>
+    <button data-m="theme">Theme</button>
+    <button data-m="elements">Elements</button>
+    <button data-m="code">Code</button>
+  </nav>
+</div>
+<input type="file" id="fileIn" accept=".json,application/json" hidden>
+<div class="dropzone" id="dropzone">drop a .goome.json, .goome-theme.json or .goome-element.json here</div>
+<script src="model.js"></script>
+<script src="templates.js"></script>
+<script src="codegen.js"></script>
+<script src="elements.js"></script>
+<script src="app.js"></script>
+<script src="stage.js"></script>
+<script src="wasm.js"></script>
+<script src="panels.js"></script>
+<script src="theme.js"></script>
+<script src="vars.js"></script>
+<script src="settings.js"></script>
+<script src="main.js"></script>
+<script src="back.js"></script>
+</body>
+</html>

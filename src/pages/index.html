@@ -1,0 +1,160 @@
+<!--meta {"title": "goome - see-through UI for any C program", "description": "See-through overlays, normal app windows, game mod menus and engine ui for any C program. One file, no dependencies, Linux, Windows, Mac.", "section": "home"} -->
+<!doctype html>
+<html lang="en">
+<head>
+{{> head}}
+</head>
+<body class="home">
+{{> header}}
+<main id="main">
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1>Easy, Good, Simple UI.</h1>
+      <p class="lede">See-through overlays, normal app windows, game mod menus and engine ui for any C program. One file, no dependencies, Linux, Windows, Mac.</p>
+      <div class="cta">
+        <a class="btn primary" href="#try">Try it in your browser</a>
+        <a class="btn" href="{{root}}docs/">Read the docs</a>
+      </div>
+      <div class="getit">
+        <code>curl -fsSL https://raw.githubusercontent.com/goome-ui/c-goome/main/get.sh | sh</code>
+        <button class="copy" type="button" data-copy="curl -fsSL https://raw.githubusercontent.com/goome-ui/c-goome/main/get.sh | sh" aria-label="Copy install command">Copy</button>
+      </div>
+      <p class="fine">{{hero_version}}GPL-3.0. Windows has a PowerShell one on the <a href="{{root}}docs/versions/">versions page</a>.</p>
+    </div>
+    <figure class="hero-shot" id="shot">
+      <div class="shot-frame">
+        <img src="{{root}}assets/img/ui-demo.webp" width="1280" height="720" alt="Two goome windows floating over a colourful desktop: a widgets window with buttons, switches and sliders, and a small stats window" fetchpriority="high">
+        <span class="rect r1"><b>clicks land here</b></span>
+        <span class="rect r2"><b>and here</b></span>
+        <span class="through"><b>everything else goes straight through to the app underneath</b></span>
+      </div>
+      <figcaption>
+        <span>goome only catches the mouse where it drew something. Real screenshot, made with goome.</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="band" id="what">
+  <div class="wrap">
+    <h2>What it makes</h2>
+    <p class="sub">The same ui kit and the same calls, whether you want a thing floating over a game or a normal app.</p>
+
+    <div class="rows">
+      <article class="row">
+        <div class="row-text">
+          <h3>Overlays</h3>
+          <p>A window with no background that sits on top of everything. Clicks go straight through wherever you drew nothing, so the game under it never notices. HUDs, crosshairs, stream overlays, key displays, sticky notes. The same code works on X11, Wayland, Windows and macOS.</p>
+          <p><a href="{{root}}docs/overlay-mode/">Overlay mode</a> &middot; <a href="{{root}}docs/downloads/">apps to download</a></p>
+        </div>
+        <img src="{{root}}assets/img/app-crosshair.webp" width="1280" height="720" loading="lazy" alt="A crosshair settings window with a preview, colour swatches, sliders and switches, over a gridded desktop">
+      </article>
+
+      <article class="row flip">
+        <div class="row-text">
+          <h3>Normal app windows</h3>
+          <p>A resizable window with menus, modals, tables, trees, plots, drag and drop and a text editor, drawn by the same kit. No GTK or Qt, no webview. It can run in a browser tab too, the demos below are goome apps built to WebAssembly.</p>
+          <p><a href="{{root}}docs/window-mode/">Window mode</a> &middot; <a href="{{root}}docs/ui-app/">App mode and menus</a></p>
+        </div>
+        <img src="{{root}}assets/img/app-menu.webp" width="980" height="640" loading="lazy" alt="A notes app with a File menu open, a title field, dropdowns, a pin switch and a text box">
+      </article>
+
+      <article class="row">
+        <div class="row-text">
+          <h3>Mod menus and engine ui</h3>
+          <p>goome can live inside a game the way Dear ImGui does. Renderer backends for DX9, DX11, DX12, OpenGL, Vulkan and Metal, packages for Unity, Minecraft, Godot and plain native DLL mods. Offscreen mode hands your engine the pixels if you would rather draw them yourself.</p>
+          <p><a href="{{root}}docs/mods/">How mods work</a> &middot; <a href="{{root}}docs/offscreen-mode/">Offscreen mode</a></p>
+        </div>
+        <img src="{{root}}assets/img/custom.webp" width="1120" height="800" loading="lazy" alt="Custom widgets made with goome: knobs, a timeline, a node graph, faders and styled buttons">
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="install" id="install">
+  <div class="wrap">
+    <h2>Install it</h2>
+    <p class="sub">Every language gets the same library. Only packages that are really published are listed as installs, the rest say where to get them.</p>
+    <div class="table-wrap">
+    <table class="installs">
+      <thead><tr><th scope="col">Language</th><th scope="col">Install</th><th scope="col">Guide</th></tr></thead>
+      <tbody>
+        {{install_rows}}
+      </tbody>
+    </table>
+    </div>
+    <p class="after">Want a project that already builds? <code>pipx install goome-cli</code> then <code>goome new my-app --lang python</code> (<a href="{{root}}docs/templates/">templates</a>). There is a <a href="https://marketplace.visualstudio.com/items?itemName=goome-ui.vscode-goome">VS Code extension</a>, a <a href="{{root}}docs/editor-intellij/">JetBrains plugin</a> and an <a href="{{root}}docs/obs/">OBS plugin</a> too. One exact version instead of the newest: <a href="{{root}}docs/versions/">Versions</a>.</p>
+  </div>
+</section>
+
+<section class="band try" id="try">
+  <div class="wrap">
+    <h2>Try it right here</h2>
+    <p class="sub">These are real goome programs built to WebAssembly, about 300 KB each. Nothing loads until you ask.</p>
+    <div class="demo" data-demo>
+      <div class="demo-bar" role="tablist" aria-label="Demos">
+        <button type="button" role="tab" aria-selected="true" data-src="{{root}}demos/game/">Brickout, a game</button>
+        <button type="button" role="tab" aria-selected="false" data-src="{{root}}demos/app/">Tidy, a task list</button>
+        <a class="open-full" href="{{root}}demos/game/" data-full>Open full page</a>
+      </div>
+      <div class="demo-stage">
+        <button class="demo-load" type="button">Load the demo</button>
+      </div>
+    </div>
+    <p class="after">Would rather drag widgets around than write them? <a href="{{root}}builder/">The builder</a> runs real goome in your tab and gives you the code in C, C#, Python, Java, Rust, Node, Go, Zig, Lua or GDScript. More on <a href="{{root}}docs/try/">the try page</a>.</p>
+  </div>
+</section>
+
+<section class="compare" id="compare">
+  <div class="wrap compare-grid">
+    <div>
+      <h2>Is it the right one for you</h2>
+      <p>Probably not always, and the compare page says so. goome is a few weeks old, GPL-3.0, has no docking and hardly anyone has written libraries for it yet. Dear ImGui has years on it and Qt has a designer and tested screen readers. Electron has npm.</p>
+      <p>What goome is built for is the see-through overlay with per region click-through, and getting overlays, normal windows and offscreen drawing out of one file without linking anything.</p>
+      <p><a class="btn" href="{{root}}docs/compare/">Read the compare page</a></p>
+    </div>
+    <div class="sizes" aria-label="Size of a hello world on Linux, stripped">
+      <h3>A hello world on Linux, stripped</h3>
+      <ul>
+        <li style="--w:1.2%"><span>microui</span><i></i><b>18 KB</b></li>
+        <li style="--w:4.1%"><span>Clay</span><i></i><b>62 KB</b></li>
+        <li style="--w:8.5%"><span>Nuklear</span><i></i><b>126 KB</b></li>
+        <li style="--w:26%"><span>Dear ImGui</span><i></i><b>394 KB</b></li>
+        <li style="--w:28%"><span>LVGL</span><i></i><b>426 KB</b></li>
+        <li class="me" style="--w:38.5%"><span>goome</span><i></i><b>584 KB</b></li>
+        <li style="--w:100%" class="cut"><span>egui</span><i></i><b>3.1 MB</b></li>
+      </ul>
+      <p>The goome number includes the window code, fonts, the software rasterizer, IME and accessibility. The small ones are a command list and nothing else. <a href="{{root}}docs/compare/#binary-size">What is in each number</a>. Measured in GitHub Actions on 2026-11-17.</p>
+    </div>
+  </div>
+</section>
+
+<section class="themes" id="themes">
+  <div class="wrap themes-grid">
+    <img src="{{root}}assets/img/skinned.webp" width="980" height="680" loading="lazy" alt="A light themed goome app with a skin loaded, using custom icons and a purple accent">
+    <div>
+      <h2>Theme galleries are coming</h2>
+      <p>goome themes are plain json files, so people can make them and swap them. A place to browse and share them is on the way. Until then <a href="{{root}}docs/ui-theme-easy/">the docs show how to make one</a> and the builder has a theme tab.</p>
+      <p><a class="btn" href="{{root}}themes/">What is planned</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="links-band">
+  <div class="wrap">
+    <h2>Go poke around</h2>
+    <ul class="biglinks">
+      <li><a href="{{root}}docs/"><b>Docs</b><span>guides for every language and the whole API</span></a></li>
+      <li><a href="{{root}}builder/"><b>Builder</b><span>drag a ui together, copy the code</span></a></li>
+      <li><a href="{{github}}"><b>GitHub</b><span>the goome-ui org, 20 odd repos</span></a></li>
+      <li><a href="{{github}}/c-goome/discussions"><b>Discussions</b><span>questions and ideas</span></a></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+{{> footer}}
+</body>
+</html>

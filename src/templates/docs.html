@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{> head}}
+</head>
+<body class="docs-body">
+{{> header}}
+<div class="docs">
+  <button class="side-btn" type="button" aria-controls="sidebar" aria-expanded="false">Pages</button>
+  <nav class="sidebar" id="sidebar" aria-label="Docs pages">
+    <div class="search" id="search" data-index="{{docs_root}}search.json" data-base="{{docs_root}}">
+      <input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" aria-label="Search the docs" aria-controls="search-hits" role="combobox" aria-expanded="false">
+      <div class="search-hits" id="search-hits" role="listbox" hidden></div>
+    </div>
+    {{sidebar}}
+  </nav>
+  <main class="content" id="main">
+    {{content}}
+    {{prevnext}}
+    <p class="edit"><a href="{{edit}}">Edit this page on GitHub</a></p>
+  </main>
+  <aside class="toc" aria-label="On this page">{{toc}}</aside>
+</div>
+{{> footer}}
+</body>
+</html>
