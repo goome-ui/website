@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  This is everything behind <a href="https://goome.wtf">goome.wtf</a>. One python script builds it, theres no node, no framework and no bundler, so you can read the whole thing in an afternoon.<br>
+  This is everything behind <a href="https://goome.wtf">goome.wtf</a>. One python script builds it, theres no node, no framework and no bundler, so you can read the whole thing within a sitting.<br>
   The docs arent in here, they live in <a href="https://github.com/goome-ui/docs">goome-ui/docs</a> as markdown and this repo turns them into pages.<br> <br>
   Found a typo, a broken link or something that looks bad on your phone? Thats exactly what this repo is for.<br> <br>
   Do you like this project? If so, please let me know!
