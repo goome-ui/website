@@ -105,3 +105,19 @@ test("c names dont clash with libc", () => {
   assert.doesNotMatch(code, /static int (strlen|memset|system|snprintf|size_t|uint32_t) /);
   assert.match(code, /static int strlen2 = 1;/);
 });
+
+test("images that arent data urls get dropped", () => {
+  const bad = ["javascript:alert(1)", "https://example.com/x.png", "x\") url(\"https://example.com/y", { toString: 1 }, 7];
+  const png = "data:image/png;base64,iVBORw0KGgo=";
+  for (const img of bad) {
+    const t = GM.normTheme({ skin_button: { img, file: "b.png" }, icons: { check: { img, file: "c.png" } } });
+    assert.strictEqual(t.skin_button, null);
+    assert.strictEqual(t.icons.check, undefined);
+    const e = GM.normElement({ name: "pic", parts: [{ kind: "bitmap", f: { img, file: "p.png" } }] });
+    assert.strictEqual(e.parts[0].f.img, "");
+  }
+  const t = GM.normTheme({ skin_button: { img: png, file: "b.png" }, icons: { check: { img: png, file: "c.png" } } });
+  assert.strictEqual(t.skin_button.img, png);
+  assert.strictEqual(t.icons.check.img, png);
+  assert.strictEqual(GM.normElement({ name: "pic", parts: [{ kind: "bitmap", f: { img: png } }] }).parts[0].f.img, png);
+});

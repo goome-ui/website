@@ -91,14 +91,15 @@
     }),
   ];
   GM.themeBase = (t) => (t && t.base === "light" ? GM.LIGHT : GM.DARK);
+  const dataImg = (s) => (typeof s === "string" && /^data:image\//i.test(s) ? s : "");
   GM.normTheme = (t) => {
     const base = GM.themeBase(t);
     const out = { id: (t && t.id) || GM.uid("t"), name: (t && t.name) || "My theme", base: t && t.base === "light" ? "light" : "dark" };
     for (const k of GM.THEME_COLORS) out[k] = t && Number.isFinite(+t[k]) ? (+t[k]) >>> 0 : base[k];
     for (const k of GM.THEME_SIZES) out[k] = t && Number.isFinite(+t[k]) ? +t[k] : base[k];
-    for (const k of GM.THEME_SKINS.concat(GM.EXTRA_SKINS)) out[k] = t && t[k] && t[k].img ? { img: String(t[k].img), file: String(t[k].file || k + ".png"), l: +t[k].l || 0, t: +t[k].t || 0, r: +t[k].r || 0, b: +t[k].b || 0, iw: +t[k].iw || 0, ih: +t[k].ih || 0 } : null;
+    for (const k of GM.THEME_SKINS.concat(GM.EXTRA_SKINS)) out[k] = t && t[k] && dataImg(t[k].img) ? { img: t[k].img, file: String(t[k].file || k + ".png"), l: +t[k].l || 0, t: +t[k].t || 0, r: +t[k].r || 0, b: +t[k].b || 0, iw: +t[k].iw || 0, ih: +t[k].ih || 0 } : null;
     out.icons = {};
-    if (t && t.icons) for (const k of GM.ICON_NAMES) if (t.icons[k] && t.icons[k].img) out.icons[k] = { img: String(t.icons[k].img), file: String(t.icons[k].file || "icon_" + k + ".png") };
+    if (t && t.icons) for (const k of GM.ICON_NAMES) if (t.icons[k] && dataImg(t.icons[k].img)) out.icons[k] = { img: t.icons[k].img, file: String(t.icons[k].file || "icon_" + k + ".png") };
     out.icon_tint = t && +t.icon_tint ? 1 : 0;
     for (const k of GM.THEME_FONTS) out[k] = t && typeof t[k] === "string" ? t[k].slice(0, 80) : "";
     const q = t && t.quick;
@@ -551,6 +552,7 @@
       pt.id = pt.id || GM.uid("p");
       const k = GM.PART_KINDS[pt.kind];
       if (k) pt.f = Object.assign(GM.clone(k.f), plain(pt.f) ? pt.f : {});
+      if (pt.kind === "bitmap") pt.f.img = dataImg(pt.f.img);
       if (pt.kind === "widget") pt.w = GM.normNodes([pt.w])[0];
       if (pt.kind === "group") {
         pt.kids = Array.isArray(pt.kids) ? pt.kids.filter(plain) : [];
