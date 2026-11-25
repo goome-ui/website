@@ -97,3 +97,11 @@ test("long text and lots of same names stay fast", () => {
   assert.match(X.generate(big, "c").code, /static char big\[64\] = "x{63}";/);
   assert.match(X.generate(big, "c").code, new RegExp('static char big2\\[4096\\] = "' + C(0xe9) + '{2047}";'));
 });
+
+test("c names dont clash with libc", () => {
+  const p = project();
+  for (const [i, name] of ["strlen", "memset", "system", "snprintf", "size_t", "uint32_t"].entries()) p.vars.push({ id: "v" + i, name, type: "int", def: 1 });
+  const code = X.generate(p, "c").code;
+  assert.doesNotMatch(code, /static int (strlen|memset|system|snprintf|size_t|uint32_t) /);
+  assert.match(code, /static int strlen2 = 1;/);
+});

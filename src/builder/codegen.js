@@ -2,7 +2,7 @@
   const GM = typeof require !== "undefined" && typeof module !== "undefined" ? require("./model.js") : root.GM;
   const X = {};
 
-  const C_RESERVED = new Set("index time log exp pow round floor ceil puts printf abs exit free malloc rand signal remove rename select read write close open link kill sleep y0 y1 yn j0 j1 jn gamma fmin fmax fabs sin cos sqrt tan atan stdin stdout stderr errno placeholder set_theme set_config draw load_bitmap pace ph gm_min gm_max gm_abs gm_floor gm_clamp fmt app on_hotkey".split(" "));
+  const C_RESERVED = new Set("index time log exp pow round floor ceil puts printf abs exit free malloc rand signal remove rename select read write close open link kill sleep y0 y1 yn j0 j1 jn gamma fmin fmax fabs sin cos sqrt tan atan stdin stdout stderr errno placeholder set_theme set_config draw load_bitmap pace ph gm_min gm_max gm_abs gm_floor gm_clamp fmt app on_hotkey system strlen strcmp strcpy memset memcpy snprintf size_t uint32_t abort atoi getenv fopen clock div".split(" "));
   const CS_RESERVED = new Set("ui u g c s e ev th app placeholder running dirty test pace err value draw setTheme tryLoad state theme".split(" "));
 
   const camel = (s) => s.replace(/_([a-z0-9])/g, (m, c) => c.toUpperCase());
