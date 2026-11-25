@@ -500,24 +500,40 @@
       app: Object.assign({}, p.app, o.app || {}), root: Array.isArray(o.root) ? o.root : [], theme: GM.applyQuick(GM.normTheme(o.theme || GM.PRESETS[0])),
       themes: Array.isArray(o.themes) ? o.themes.map(GM.normTheme) : [], elements: Array.isArray(o.elements) ? o.elements.map(GM.normElement) : [],
       grid: Object.assign({}, p.grid, o.grid || {}),
-      vars: Array.isArray(o.vars) ? o.vars.filter((v) => v && v.name && GM.VAR_TYPES[v.type]).map((v) => Object.assign({ id: GM.uid("v"), min: 0, max: 1 }, v)) : [],
-      hotkeys: Array.isArray(o.hotkeys) ? o.hotkeys.filter((k) => k && k.combo) : [],
+      vars: Array.isArray(o.vars) ? o.vars.filter((v) => plain(v) && v.name && GM.VAR_TYPES[v.type]).map((v) => Object.assign({ id: GM.uid("v"), min: 0, max: 1 }, v)) : [],
+      hotkeys: Array.isArray(o.hotkeys) ? o.hotkeys.filter((k) => plain(k) && k.combo).map((k) => Object.assign(k, { actions: Array.isArray(k.actions) ? k.actions.filter(plain) : [] })) : [],
       config: GM.normConfig(o.config),
     };
     if (o.settings && typeof o.settings === "object") out.settings = Object.assign({}, GM.SETTINGS_DEFAULT, o.settings);
-    GM.walk(out.root, (n) => {
-      if (!n.id) n.id = GM.uid();
-      const def = GM.TYPES[n.type];
-      n.p = Object.assign(GM.clone(def ? def.p : {}), n.p || {});
-      const k = GM.slotCount(n);
-      if (k) {
-        n.kids = Array.isArray(n.kids) ? n.kids : [];
-        while (n.kids.length < k) n.kids.push([]);
-      }
-    });
-    out.root = out.root.filter((n) => GM.TYPES[n.type]);
+    out.root = GM.normNodes(out.root).filter((n) => GM.TYPES[n.type]);
     return out;
   };
+
+  GM.normNode = (n) => {
+    if (!n.id || typeof n.id === "object") n.id = GM.uid();
+    const def = GM.TYPES[n.type];
+    const p = Object.assign(GM.clone(def ? def.p : {}), plain(n.p) ? n.p : {});
+    for (const k of Object.keys(p)) {
+      const v = p[k], d = def ? def.p[k] : undefined;
+      if (typeof d === "string") p[k] = typeof v === "string" ? v : typeof v === "number" || typeof v === "boolean" ? String(v) : "";
+      else if (typeof d === "number") p[k] = (typeof v === "number" || typeof v === "string") && Number.isFinite(+v) ? +v : 0;
+      else if (typeof d === "boolean") p[k] = !!v;
+      else if (d !== undefined) p[k] = plain(v) ? v : {};
+      else if (v === null || typeof v === "object") delete p[k];
+    }
+    n.p = p;
+    if (plain(n.on)) for (const e of Object.keys(n.on)) n.on[e] = Array.isArray(n.on[e]) ? n.on[e].filter(plain) : [];
+    else delete n.on;
+    const k = GM.slotCount(n);
+    if (k) {
+      n.kids = Array.isArray(n.kids) ? n.kids : [];
+      while (n.kids.length < k) n.kids.push([]);
+    }
+    if (Array.isArray(n.kids)) n.kids = n.kids.map(GM.normNodes);
+    else delete n.kids;
+    return n;
+  };
+  GM.normNodes = (list) => (Array.isArray(list) ? list.filter(plain).map(GM.normNode) : []);
 
   GM.normElement = (e) => {
     const d = GM.newElement(e && e.name);
@@ -532,9 +548,10 @@
     const fix = (list) => list.forEach((pt) => {
       pt.id = pt.id || GM.uid("p");
       const k = GM.PART_KINDS[pt.kind];
-      if (k) pt.f = Object.assign(GM.clone(k.f), pt.f || {});
+      if (k) pt.f = Object.assign(GM.clone(k.f), plain(pt.f) ? pt.f : {});
+      if (pt.kind === "widget") pt.w = GM.normNodes([pt.w])[0];
       if (pt.kind === "group") {
-        pt.kids = Array.isArray(pt.kids) ? pt.kids : [];
+        pt.kids = Array.isArray(pt.kids) ? pt.kids.filter(plain) : [];
         pt.drag = Object.assign({ on: false, axis: "free", snap: 0, bounds: "element", rect: { x: 0, y: 0, w: 100, h: 40 }, handle: "" }, pt.drag || {});
         fix(pt.kids);
       }
@@ -828,6 +845,7 @@
   };
 
   GM.VAR_TYPES = { bool: "yes/no", int: "whole number", float: "number", string: "text", color: "color", list: "list of text" };
+  for (const t of [GM.TYPES, GM.PART_KINDS, GM.VAR_TYPES]) Object.setPrototypeOf(t, null);
   GM.varDefault = (type) => ({ bool: false, int: 0, float: 0, string: "", color: 0xFF6FDC5F, list: "one\ntwo\nthree" })[type];
   GM.newVar = (project, type, base) => {
     const v = { id: GM.uid("v"), name: GM.uniqueVar(project, base || type), type, def: GM.varDefault(type), min: 0, max: type === "int" ? 100 : 1 };

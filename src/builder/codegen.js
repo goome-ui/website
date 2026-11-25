@@ -1351,7 +1351,7 @@
     switch (n.type) {
       case "table": {
         const cols = GM.lines(p.cols).map((x) => {
-          const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+          const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
           return [m[1].trim(), m[2] ? +m[2] : 0];
         });
         if (!cols.length) cols.push(["Column", 0]);
@@ -3844,7 +3844,7 @@
       switch (n.type) {
         case "table": {
           const cols = GM.lines(p.cols).map((x) => {
-            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
             return [m[1].trim(), m[2] ? +m[2] : 0];
           });
           if (!cols.length) cols.push(["Column", 0]);
@@ -5591,7 +5591,7 @@
       switch (n.type) {
         case "table": {
           const cols = GM.lines(p.cols).map((x) => {
-            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
             return [m[1].trim(), m[2] ? +m[2] : 0];
           });
           if (!cols.length) cols.push(["Column", 0]);
@@ -7306,7 +7306,7 @@
         switch (n.type) {
           case "table": {
             const cols = GM.lines(p.cols).map((x) => {
-              const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+              const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
               return [m[1].trim(), m[2] ? +m[2] : 0];
             });
             if (!cols.length) cols.push(["Column", 0]);
@@ -9079,7 +9079,7 @@
       switch (n.type) {
         case "table": {
           const cols = GM.lines(p.cols).map((x) => {
-            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
             return [m[1].trim(), m[2] ? +m[2] : 0];
           });
           if (!cols.length) cols.push(["Column", 0]);
@@ -10801,7 +10801,7 @@
       switch (n.type) {
         case "table": {
           const cols = GM.lines(p.cols).map((x) => {
-            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
             return [m[1].trim(), m[2] ? +m[2] : 0];
           });
           if (!cols.length) cols.push(["Column", 0]);
@@ -11628,6 +11628,7 @@
     };
   })();
 
+  const bare = (project) => JSON.parse(JSON.stringify(project, (k, v) => (k === "toString" || k === "valueOf" || k === "__proto__" ? undefined : v)));
   X.generate = (project, lang) => {
     const warnings = [];
     const seen = new Set();
@@ -11637,18 +11638,18 @@
       seen.add(k);
       warnings.push({ id, msg });
     };
-    const pj = GM.normProject(GM.clone(project));
+    const pj = GM.normProject(bare(project));
     const ext = X.langs[lang];
     const r = ext ? ext.generate(pj, warn, X.H) : lang === "cs" ? genCS(pj, warn) : lang === "py" ? genPy(pj, warn) : lang === "java" ? genJava(pj, warn) : lang === "gd" ? genGd(pj, warn) : genC(pj, warn);
     return { code: r.code, warnings, files: r.files, file: r.file };
   };
 
   X.hint = (project, lang) => {
-    if (X.langs[lang]) return X.langs[lang].hint(GM.normProject(GM.clone(project)));
+    if (X.langs[lang]) return X.langs[lang].hint(GM.normProject(bare(project)));
     if (lang === "cs") return "dotnet new console -n ui, reference GoomeSharp, paste this over Program.cs, dotnet run";
     if (lang === "py") return "PYTHONPATH=path/to/python-goome python3 ui.py";
     if (lang === "java") {
-      const n = javaClass(GM.normProject(GM.clone(project)));
+      const n = javaClass(GM.normProject(bare(project)));
       return "java 22+: java --enable-native-access=ALL-UNNAMED -cp goome-0.2.0.jar " + n + ".java    or javac -cp goome-0.2.0.jar " + n + ".java, then run it with -cp goome-0.2.0.jar:.";
     }
     if (lang === "gd") return "put addons/goome in your project, add a GoomeView node (anchors Full Rect) and attach this script to it";
