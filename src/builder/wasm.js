@@ -356,7 +356,7 @@
         case "table": {
           o.id = nm();
           const cols = GM.lines(p.cols).map((x) => {
-            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/.exec(x);
+            const m = /^(.*?)(?::\s*(\d+(?:\.\d+)?))?$/s.exec(x);
             return [m[1].trim(), m[2] ? +m[2] : 0];
           });
           if (!cols.length) cols.push(["Column", 0]);
