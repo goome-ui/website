@@ -509,6 +509,7 @@
     return out;
   };
 
+  GM.safeFmt = (f) => (typeof f === "string" && /^(?:[^%]|%%)*(?:%[-+ #0]*\d*(?:\.\d*)?[eEfFgG](?:[^%]|%%)*)?$/.test(f) ? f : "");
   GM.normNode = (n) => {
     if (!n.id || typeof n.id === "object") n.id = GM.uid();
     const def = GM.TYPES[n.type];
@@ -521,6 +522,7 @@
       else if (d !== undefined) p[k] = plain(v) ? v : {};
       else if (v === null || typeof v === "object") delete p[k];
     }
+    if (n.type === "slider") p.fmt = GM.safeFmt(p.fmt);
     n.p = p;
     if (plain(n.on)) for (const e of Object.keys(n.on)) n.on[e] = Array.isArray(n.on[e]) ? n.on[e].filter(plain) : [];
     else delete n.on;

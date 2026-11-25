@@ -46,3 +46,20 @@ test("broken project files dont crash the generator", () => {
   ];
   for (const d of docs) each(d, (code, l) => assert.ok(code.length > 100, l));
 });
+
+test("slider format can only be one float conversion", () => {
+  const withFmt = (f) => {
+    const e = GM.newElement("box");
+    const w = GM.newPart("widget");
+    w.w = N("slider", { var: "inner", fmt: f });
+    e.parts.push(w);
+    const p = project(N("slider", { var: "s1", fmt: f }), N("el", { el: e.id, var: "box1" }));
+    p.elements = [e];
+    return p;
+  };
+  for (const f of ["ZZ%s", "ZZ%n", "ZZ%d", "ZZ%.2f %s", "ZZ%*f", "ZZ%lf", "ZZ%.2f%", "ZZ%5$f", "ZZ %"]) each(withFmt(f), (code, l) => assert.ok(!code.includes(f), l + " " + f));
+  for (const f of ["%.3f", "%5.1f%%", "%g px", "ZZ 100%%", "%+08.3e"]) each(withFmt(f), (code, l) => assert.strictEqual(code.split('"' + f + '"').length, 3, l + " " + f));
+  assert.strictEqual(GM.safeFmt("%s"), "");
+  assert.strictEqual(GM.safeFmt(5), "");
+  assert.strictEqual(GM.safeFmt("%.1f"), "%.1f");
+});
