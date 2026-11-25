@@ -491,6 +491,7 @@
     return p;
   };
 
+  const plain = (v) => !!v && typeof v === "object" && !Array.isArray(v);
   GM.normProject = (o) => {
     const p = GM.starterProject();
     if (!o || typeof o !== "object") return p;
@@ -526,7 +527,8 @@
     out.name = GM.ident(out.name);
     out.resizable = Object.assign(GM.newElement().resizable, out.resizable || {});
     out.value = Object.assign(GM.newElement().value, out.value || {});
-    for (const k of ["params", "state", "events", "parts"]) if (!Array.isArray(out[k])) out[k] = [];
+    for (const k of ["params", "state", "events", "parts"]) out[k] = Array.isArray(out[k]) ? out[k].filter(plain) : [];
+    for (const x of out.params.concat(out.state)) if (typeof x.name !== "string" || !/^[A-Za-z_]\w*$/.test(x.name)) x.name = GM.ident(typeof x.name === "string" ? x.name : "");
     const fix = (list) => list.forEach((pt) => {
       pt.id = pt.id || GM.uid("p");
       const k = GM.PART_KINDS[pt.kind];
