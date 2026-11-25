@@ -16,9 +16,13 @@
     return n;
   };
   const cut = (s, max) => {
-    s = String(s);
-    while (bytes(s) > max) s = s.slice(0, -1);
-    return s;
+    let n = 0, out = "";
+    for (const ch of String(s)) {
+      n += bytes(ch);
+      if (n > max) break;
+      out += ch;
+    }
+    return out;
   };
   const ctl = (v, lang) => v.replace(/[\x00-\x1f\x7f\x85\u2028\u2029]/g, (ch) => {
     const n = ch.charCodeAt(0);
@@ -83,13 +87,15 @@
   function names(project) {
     const used = new Set();
     const map = new Map();
+    const next = new Map();
     const take = (base) => {
       let v = GM.ident(base);
       const bad = (x) => used.has(x) || C_RESERVED.has(x) || CS_RESERVED.has(camel(x)) || GM.RESERVED.has(camel(x));
       if (bad(v)) {
         const stem = v.replace(/_?\d+$/, "") || "v";
-        let i = 2;
+        let i = next.get(stem) || 2;
         while (bad(stem + i)) i++;
+        next.set(stem, i + 1);
         v = stem + i;
       }
       used.add(v);
@@ -6540,13 +6546,16 @@
       const st = { k: 0, scope: null, nm: new Map(), themeVars: null, bitmaps: null, pkgUsed: new Set(), fieldUsed: new Set() };
       const idxNodes = GM.index(project);
 
+      const nextOf = new Map([[st.fieldUsed, new Map()], [st.pkgUsed, new Map()]]);
       const takeIn = (set, base) => {
         let v = GM.ident(base);
         const bad = (x) => set.has(camel(x)) || LOCALS.has(camel(x));
         if (bad(v)) {
           const stem = v.replace(/_?\d+$/, "") || "v";
-          let i = 2;
+          const next = nextOf.get(set);
+          let i = next.get(stem) || 2;
           while (bad(stem + i)) i++;
+          next.set(stem, i + 1);
           v = stem + i;
         }
         set.add(camel(v));

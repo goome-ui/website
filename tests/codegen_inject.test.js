@@ -85,3 +85,15 @@ test("control characters in text get escaped", () => {
   const rest = "a" + u(0) + "b" + u(1) + "c" + u(27) + "d" + u(0x7f) + "e" + u(0x85) + "f" + u(0x2028) + "g" + u(0x2029) + "h";
   each(p, (code, l) => assert.ok(code.includes(want[l] || rest), l));
 });
+
+test("long text and lots of same names stay fast", () => {
+  const big = project(N("input", { var: "big", text: "x".repeat(300000), cap: 64 }), N("text_edit", { var: "big2", text: C(0xe9).repeat(200000), cap: 4096 }));
+  const many = GM.starterProject();
+  for (let i = 0; i < 20000; i++) many.vars.push({ id: "v" + i, name: "same", type: "int", def: 1 });
+  const t0 = Date.now();
+  each(big, (code, l) => assert.ok(code.length < 700000, l));
+  for (const l of LANGS) assert.ok(X.generate(many, l).code.length > 100000, l);
+  assert.ok(Date.now() - t0 < 60000);
+  assert.match(X.generate(big, "c").code, /static char big\[64\] = "x{63}";/);
+  assert.match(X.generate(big, "c").code, new RegExp('static char big2\\[4096\\] = "' + C(0xe9) + '{2047}";'));
+});
