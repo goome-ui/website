@@ -63,3 +63,25 @@ test("slider format can only be one float conversion", () => {
   assert.strictEqual(GM.safeFmt(5), "");
   assert.strictEqual(GM.safeFmt("%.1f"), "%.1f");
 });
+
+test("control characters in text get escaped", () => {
+  const txt = "a" + C(0) + "b" + C(1) + "c" + C(27) + "d" + C(0x7f) + "e" + C(0x85) + "f" + C(0x2028) + "g" + C(0x2029) + "h";
+  const p = project(N("label", { label: txt }), N("button", { label: "{count} " + txt, tooltip: txt }), N("input", { var: "in1", text: txt, hint: txt }), N("combo", { var: "cb", items: txt + "\nz" }));
+  p.vars.push({ id: "v1", name: "count", type: "int", def: 1 }, { id: "v2", name: "note", type: "string", def: txt });
+  p.title = txt;
+  const low = new RegExp("[" + C(0) + "-" + C(8) + C(11) + "-" + C(31) + C(0x7f) + "]");
+  const high = new RegExp("[" + C(0x85) + C(0x2028) + C(0x2029) + "]");
+  each(p, (code, l) => {
+    assert.ok(!low.test(code), l);
+    if (l !== "c" && l !== "lua") assert.ok(!high.test(code), l);
+  });
+  const u = (n) => "\\u" + n.toString(16).padStart(4, "0");
+  const b = (n) => "\\u{" + n.toString(16) + "}";
+  const want = {
+    c: "a\\000b\\001c\\033d\\177e", lua: "a\\000b\\001c\\027d\\127e",
+    rust: "a" + b(0) + "b" + b(1) + "c" + b(27) + "d" + b(0x7f) + "e" + b(0x85) + "f" + b(0x2028) + "g" + b(0x2029) + "h",
+    zig: "a\\x00b\\x01c\\x1bd\\x7fe" + b(0x85) + "f" + b(0x2028) + "g" + b(0x2029) + "h",
+  };
+  const rest = "a" + u(0) + "b" + u(1) + "c" + u(27) + "d" + u(0x7f) + "e" + u(0x85) + "f" + u(0x2028) + "g" + u(0x2029) + "h";
+  each(p, (code, l) => assert.ok(code.includes(want[l] || rest), l));
+});

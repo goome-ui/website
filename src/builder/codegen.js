@@ -20,8 +20,16 @@
     while (bytes(s) > max) s = s.slice(0, -1);
     return s;
   };
+  const ctl = (v, lang) => v.replace(/[\x00-\x1f\x7f\x85\u2028\u2029]/g, (ch) => {
+    const n = ch.charCodeAt(0);
+    if (lang === "c") return n < 128 ? "\\" + n.toString(8).padStart(3, "0") : ch;
+    if (lang === "lua") return n < 128 ? "\\" + String(n).padStart(3, "0") : ch;
+    if (lang === "rust" || lang === "zig") return "\\u{" + n.toString(16) + "}";
+    return "\\u" + n.toString(16).padStart(4, "0");
+  });
   const strq = (s, lang) => {
     let v = String(s == null ? "" : s).replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "").replace(/\n/g, "\\n").replace(/\t/g, "\\t");
+    v = ctl(v, lang);
     if (lang === "c") v = v.replace(/\?\?/g, "?\\?");
     return '"' + v + '"';
   };
@@ -4971,7 +4979,7 @@
       return s;
     }
 
-    const tq = (s) => s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${").replace(/\r/g, "").replace(/\n/g, "\\n").replace(/\t/g, "\\t");
+    const tq = (s) => ctl(s.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/g, "\\${").replace(/\r/g, "").replace(/\n/g, "\\n").replace(/\t/g, "\\t"), "js");
 
     function textCode(ctx, text, opts) {
       const parts = GM.interp(text);
@@ -8216,6 +8224,7 @@
         else if (ch === "\t") v += "\\t";
         else if (ch === "\r") continue;
         else if (c < 0x20 || c === 0x7f) v += "\\x" + c.toString(16).padStart(2, "0");
+        else if (c === 0x85 || c === 0x2028 || c === 0x2029) v += ctl(ch, "zig");
         else v += ch;
       }
       return '"' + v + '"';
